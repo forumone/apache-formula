@@ -5,6 +5,8 @@
     'Gentoo': {
         'server': 'www-servers/apache',
         'service': 'apache2',
+        'user': 'apache',
+        'group': 'apache',
         'configfile': '/etc/apache2/httpd.conf',
 
         'mod_wsgi': 'www-apache/mod_wsgi',
@@ -18,11 +20,12 @@
         'logdir': '/var/log/apache2',
         'logrotatedir': '/etc/logrotate.d/apache2',
         'wwwdir': '/var/www',
-        'use_require': False,
     },
     'Debian': {
         'server': 'apache2',
         'service': 'apache2',
+        'user': 'www-data',
+        'group': 'www-data',
         'configfile': '/etc/apache2/apache2.conf',
         'portsfile': '/etc/apache2/ports.conf',
 
@@ -31,6 +34,8 @@
         'mod_perl2': 'libapache2-mod-perl2',
         'mod_fcgid': 'libapache2-mod-fcgid',
         'mod_pagespeed_source': 'https://dl-ssl.google.com/dl/linux/direct/mod-pagespeed-stable_current_amd64.deb',
+        'mod_xsendfile': 'libapache2-mod-xsendfile',
+        'mod_fastcgi': 'libapache2-mod-fastcgi',
 
         'vhostdir': '/etc/apache2/sites-available',
         'confdir': '/etc/apache2/conf.d',
@@ -40,14 +45,16 @@
         'logdir': '/var/log/apache2',
         'logrotatedir': '/etc/logrotate.d/apache2',
         'wwwdir': '/srv',
-        'use_require': False,
     },
     'RedHat': {
         'server': 'httpd',
         'service': 'httpd',
+        'user': 'apache',
+        'group': 'apache',
         'configfile': '/etc/httpd/conf/httpd.conf',
 
         'mod_wsgi': 'mod_wsgi',
+        'conf_mod_wsgi': '/etc/httpd/conf.d/wsgi.conf',
         'mod_php5': 'php',
         'mod_pagespeed_source': 'https://dl-ssl.google.com/dl/linux/direct/mod-pagespeed-stable_current_x86_64.rpm',
 
@@ -60,11 +67,12 @@
         'logrotatedir': '/etc/logrotate.d/httpd',
         'wwwdir': '/var/www',
         'default_charset': 'UTF-8',
-        'use_require': False,
     },
     'Suse': {
         'server': 'apache2',
         'service': 'apache2',
+        'user': 'wwwrun',
+        'group': 'www',
         'configfile': '/etc/apache2/httpd.conf',
 
         'mod_wsgi': 'apache2-mod_wsgi',
@@ -72,17 +80,18 @@
         'mod_fcgid': 'apache2-mod_fcgid',
 
         'vhostdir': '/etc/apache2/vhosts.d',
-        'confdir': '/etc/httpd/conf.d',
+        'confdir': '/etc/apache2/conf.d',
         'confext': '.conf',
         'default_site': 'vhost.template',
         'default_site_ssl': 'vhost-ssl.template',
         'logdir': '/var/log/apache2',
         'wwwdir': '/srv/www',
-        'use_require': True,
     },
     'FreeBSD': {
         'server': 'apache22',
         'service': 'apache22',
+        'user': 'www',
+        'group': 'www',
         'configfile': '/usr/local/etc/apache22/httpd.conf',
         'portsfile': '/usr/local/etc/apache22/ports.conf',
 
@@ -100,51 +109,70 @@
         'default_site_ssl': 'default-ssl',
         'logdir': '/var/log/',
         'wwwdir': '/usr/local/www/apache22/',
-        'use_require': False,
     },
 }, merge=salt['grains.filter_by']({
     'precise': {
         'confext': '',
         'default_site': 'default',
         'default_site_ssl': 'default-ssl',
-        'use_require': True,
     },
     'trusty': {
         'confext': '.conf',
         'default_site': '000-default.conf',
         'default_site_ssl': 'default-ssl.conf',
-        'use_require': True,
     },
     'utopic': {
         'confext': '.conf',
         'default_site': '000-default.conf',
         'default_site_ssl': 'default-ssl.conf',
-        'use_require': True,
     },
     'vivid': {
         'confext': '.conf',
         'default_site': '000-default.conf',
         'default_site_ssl': 'default-ssl.conf',
-        'use_require': True,
     },
     'wily': {
         'confext': '.conf',
         'default_site': '000-default.conf',
         'default_site_ssl': 'default-ssl.conf',
-        'use_require': True,
     },
     'xenial': {
         'confext': '.conf',
         'default_site': '000-default.conf',
         'default_site_ssl': 'default-ssl.conf',
-        'use_require': True,
+    },
+    'yakkety': {
+        'confext': '.conf',
+        'default_site': '000-default.conf',
+        'default_site_ssl': 'default-ssl.conf',
+    },
+    'zesty': {
+        'confext': '.conf',
+        'default_site': '000-default.conf',
+        'default_site_ssl': 'default-ssl.conf',
+    },
+    'artful': {
+        'confext': '.conf',
+        'default_site': '000-default.conf',
+        'default_site_ssl': 'default-ssl.conf',
     },
     'jessie': {
         'wwwdir': '/var/www',
         'confext': '.conf',
         'default_site': '000-default.conf',
         'default_site_ssl': 'default-ssl.conf',
-        'use_require': True,
+    },
+    'stretch': {
+        'wwwdir': '/var/www',
+        'confext': '.conf',
+        'default_site': '000-default.conf',
+        'default_site_ssl': 'default-ssl.conf',
+    },
+    'buster': {
+        'wwwdir': '/var/www',
+        'confext': '.conf',
+        'default_site': '000-default.conf',
+        'default_site_ssl': 'default-ssl.conf',
     },
 }, grain='oscodename', merge=salt['grains.filter_by'](
     osfingermap
