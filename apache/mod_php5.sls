@@ -6,7 +6,6 @@ include:
 mod-php5:
   pkg.installed:
     - name: {{ apache.mod_php5 }}
-    - order: 180
     - require:
       - pkg: apache
 
