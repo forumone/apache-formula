@@ -16,9 +16,6 @@ a2enmod mod_ssl:
       - module: apache-restart
 
 {% elif grains['os_family']=="RedHat" %}
-
-include:
-  - apache
   
 mod_ssl:
   pkg.installed:
