@@ -34,7 +34,6 @@ include:
 find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^\s*LoadModule.{{ module }}_module\)/#\1/g' {} \;:
   cmd.run:
     - onlyif: httpd -M 2> /dev/null | grep "[[:space:]]{{ module }}_module"
-    - order: 225
     - require:
       - pkg: apache
     - watch_in:
@@ -45,7 +44,6 @@ find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^\s*LoadModule.{{ m
 find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^#\)\(\s*LoadModule.{{ module }}_module\)/\2/g' {} \;:
   cmd.run:
     - unless: httpd -M 2> /dev/null | grep "[[:space:]]{{ module }}_module"
-    - order: 225
     - require:
       - pkg: apache
     - watch_in:
