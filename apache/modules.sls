@@ -29,23 +29,21 @@ a2dismod -f {{ module }}:
 
 include:
   - apache
- 
-{% for module in salt['pillar.get']('apache:modules:enabled', []) %}
-find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^#\)\(\s*LoadModule.{{ module }}_module\)/\2/g' {} \;:
+
+{% for module in salt['pillar.get']('apache:modules:disabled', []) %}
+find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^\s*LoadModule.{{ module }}_module\)/#\1/g' {} \;:
   cmd.run:
-    - unless: httpd -M 2> /dev/null | grep "[[:space:]]{{ module }}_module"
-    - order: 225
+    - onlyif: httpd -M 2> /dev/null | grep "[[:space:]]{{ module }}_module"
     - require:
       - pkg: apache
     - watch_in:
       - module: apache-restart
 {% endfor %}
 
-{% for module in salt['pillar.get']('apache:modules:disabled', []) %}
-find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^\s*LoadModule.{{ module }}_module\)/#\1/g' {} \;:
+{% for module in salt['pillar.get']('apache:modules:enabled', []) %}
+find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^#\)\(\s*LoadModule.{{ module }}_module\)/\2/g' {} \;:
   cmd.run:
-    - onlyif: httpd -M 2> /dev/null | grep "[[:space:]]{{ module }}_module"
-    - order: 225
+    - unless: httpd -M 2> /dev/null | grep "[[:space:]]{{ module }}_module"
     - require:
       - pkg: apache
     - watch_in:
@@ -57,6 +55,17 @@ find /etc/httpd/ -name '*.conf' -type f -exec sed -i -e 's/\(^\s*LoadModule.{{ m
 include:
   - apache
  
+{% for module in salt['pillar.get']('apache:modules:disabled', []) %}
+a2dismod -f {{ module }}:
+  cmd.run:
+    - onlyif: egrep "^APACHE_MODULES=" /etc/sysconfig/apache2 | grep {{ module }}
+    - order: 225
+    - require:
+      - pkg: apache
+    - watch_in:
+      - module: apache-restart
+{% endfor %}
+
 {% for module in salt['pillar.get']('apache:modules:enabled', []) %}
 a2enmod {{ module }}:
   cmd.run:
@@ -68,15 +77,5 @@ a2enmod {{ module }}:
       - module: apache-restart
 {% endfor %}
 
-{% for module in salt['pillar.get']('apache:modules:disabled', []) %}
-a2dismod -f {{ module }}:
-  cmd.run:
-    - onlyif: egrep "^APACHE_MODULES=" /etc/sysconfig/apache2 | grep {{ module }}
-    - order: 225
-    - require:
-      - pkg: apache
-    - watch_in:
-      - module: apache-restart
-{% endfor %}
 
 {% endif %}
