@@ -7,7 +7,6 @@ include:
 a2enmod {{ module }}:
   cmd.run:
     - unless: ls /etc/apache2/mods-enabled/{{ module }}.load
-    - order: 225
     - require:
       - pkg: apache
     - watch_in:
@@ -18,7 +17,6 @@ a2enmod {{ module }}:
 a2dismod -f {{ module }}:
   cmd.run:
     - onlyif: ls /etc/apache2/mods-enabled/{{ module }}.load
-    - order: 225
     - require:
       - pkg: apache
     - watch_in:
@@ -59,7 +57,6 @@ include:
 a2dismod -f {{ module }}:
   cmd.run:
     - onlyif: egrep "^APACHE_MODULES=" /etc/sysconfig/apache2 | grep {{ module }}
-    - order: 225
     - require:
       - pkg: apache
     - watch_in:
@@ -70,7 +67,6 @@ a2dismod -f {{ module }}:
 a2enmod {{ module }}:
   cmd.run:
     - unless: egrep "^APACHE_MODULES=" /etc/sysconfig/apache2 | grep {{ module }}
-    - order: 225
     - require:
       - pkg: apache
     - watch_in:
